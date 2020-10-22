@@ -30,3 +30,10 @@
 *.exe
 *.out
 *.app
+
+*.os
+build
+.sconsign.dblite
+.vscode
+.vscode/*
+.clang_format
