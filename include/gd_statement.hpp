@@ -68,17 +68,6 @@ public:
     bool executeStep();
 
     /**
-     * @brief Execute a one-step query with no expected result. In case of any
-     * error GDDatabase::m_what is set with proper error message.
-     *
-     * @see SQLite::Statement::exec()
-     *
-     * @return The number of rows modified by the sql statement set by
-     * setStatement funcion and Resutl::FAILED in case of any error.
-     */
-    int exec();
-
-    /**
      * @brief Return a copy of the column data specified by its index. In case
      * of any error GDDatabase::m_what is set with proper error message.
      *

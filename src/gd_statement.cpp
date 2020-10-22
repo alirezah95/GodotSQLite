@@ -65,25 +65,6 @@ bool GDStatement::executeStep()
 }  // executeStep.
 
 
-int GDStatement::exec()
-{
-    if (m_statement == nullptr) {
-        m_database->m_what = "Statement is empty.";
-        return Result::FAILED;
-    }
-
-    int rows = -1;
-    try {
-        rows = m_statement->exec();
-    } catch (exception& ex) {
-        m_database->m_what = ex.what();
-        return Result::FAILED;
-    }
-
-    return rows;
-}  // exec.
-
-
 Variant GDStatement::getColumn(const int index)
 {
     if (m_statement == nullptr) {

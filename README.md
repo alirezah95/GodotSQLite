@@ -45,5 +45,5 @@ Assuming that you are familiar wiht [using GDNative module](https://docs.godoten
 * ##### [Second example](https://github.com/alirezah95/GodotSQLite/blob/main/examples/secondExample.gd) shows how to use GDStatement class to query statement that expects results and how to get those result.
 
 ## See also:
-**[SQLiteC++](https://github.com/SRombauts/SQLiteCpp)**: A smart and easy to use C++ SQLite3 wrapper.
-**[GDNative C++ Example](https://docs.godotengine.org/en/stable/tutorials/plugins/gdnative/gdnative-cpp-example.html)**: Complete guild to write C++ modules for Godot or to simply use a compiled one in your project.
+* **[SQLiteC++](https://github.com/SRombauts/SQLiteCpp)**: A smart and easy to use C++ SQLite3 wrapper.
+* **[GDNative C++ Example](https://docs.godotengine.org/en/stable/tutorials/plugins/gdnative/gdnative-cpp-example.html)**: Complete guild to write C++ modules for Godot or to simply use a compiled one in your project.
