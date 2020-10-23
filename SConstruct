@@ -113,9 +113,18 @@ if 'gd_library_name' not in env:
         arch_suffix,
     )
 if env['target'] == 'release':
-    env.Append(CCFLAGS='-O3')
+    env.Append(CCFLAGS='-Os')
+    env.Append(LINKFLAGS='-flto')
 elif env['target'] == 'debug':
     env.Append(CCFLAGS='-g')
+
+if env['platform'] == 'linux':
+    if env['bits'] == '64':
+        env.Append(CCFLAGS=['-m64'])
+        env.Append(LINKFLAGS=['-m64'])
+    elif env['bits'] == '32':
+        env.Append(CCFLAGS=['-m32'])
+        env.Append(LINKFLAGS=['-m32'])
 
 if env['platform'] == 'android':
     print('*** Building for <android> ***')
@@ -190,20 +199,23 @@ outputFile = outpath + 'libgodotsqlite.{}.{}.{}.{}'.format(
 sources = []
 sources += Glob('build/obj1/*.cpp')
 sources += Glob('build/obj2/*.cpp')
-sources += Glob('build/obj3/*.c')
+# sources += Glob('build/obj3/*.c')
 
 list_of_add_includes = env['add_includes'].split(sep=':')
 for incl in list_of_add_includes:
 	env.Append(CPPPATH=incl+':')
 
-workspaceIncludes = ['.:', 'include:', 'SQLiteCpp/include/:']
+workspaceIncludes = ['.:', 'include:',
+                     'SQLiteCpp/include/:', "SQLiteCpp/sqlite3/:"]
 for incl in workspaceIncludes:
     env.Append(CPPPATH=incl)
 
 env.Append(CPPPATH=env['gd_headers_dir']+':')
 
+SqliteLib = env.SharedLibrary(target='build/obj3/libsqlite3.so', source='build/obj3/sqlite3.c')
+
 GodotLibrary = env.SharedLibrary(target=outputFile,
                                  source=sources,
-                                 LIBS=[env['gd_library_name']],
-                                 LIBPATH=env['gd_library_dir'])
-Default(GodotLibrary)
+                                 LIBS=[env['gd_library_name'], 'sqlite3'],
+                                 LIBPATH=[env['gd_library_dir'], 'build/obj3/'])
+Default(SqliteLib, GodotLibrary)
