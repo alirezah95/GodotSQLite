@@ -3,8 +3,8 @@
 
 #include <SQLiteCpp/Statement.h>
 
-#include <godot/Node.hpp>
-#include <godot/core/Godot.hpp>
+#include <Node.hpp>
+#include <core/Godot.hpp>
 #include <memory>
 #include <result_enum.hpp>
 

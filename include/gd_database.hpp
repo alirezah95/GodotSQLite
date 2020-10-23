@@ -5,9 +5,9 @@
 #include <SQLiteCpp/Transaction.h>
 
 #include <gd_statement.hpp>
-#include <godot/Node.hpp>
-#include <godot/core/Godot.hpp>
-#include <godot/core/Ref.hpp>
+#include <Node.hpp>
+#include <core/Godot.hpp>
+#include <core/Ref.hpp>
 #include <memory>
 #include <result_enum.hpp>
 
