@@ -11,7 +11,8 @@ Developments and tests are done under the following OSs:
 
 
 # Getting Started:
-In order to use this library simply download and copy the [latest release](https://github.com/alirezah95/GodotSQLite/releases) and paste it in a **`Bin/`** folder into **`res::Scripts/`** folder. For special cases you can use [this page](https://github.com/alirezah95/GodotSQLite/blob/main/docs/Compiling.md) to compile the library yourself.
+In order to use this library simply download the [latest release](https://github.com/alirezah95/GodotSQLite/releases), uncompress and paste contents of GodotSQLite folder into **`res::Scripts/`** folder.
+For special cases you can use [this page](https://github.com/alirezah95/GodotSQLite/blob/main/docs/Compiling.md) to compile the library yourself.
 
 ### Documentation:
 You can read classes description and API documentation from **[this file](https://github.com/alirezah95/GodotSQLite/blob/main/docs/Documentation.md)**.
