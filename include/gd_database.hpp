@@ -78,7 +78,7 @@ namespace godot
          * @return True if table with tableName exists in database and false
          * otherwise.
          */
-        bool tableExists(const String tableName);
+        bool table_exists(const String tableName);
 
         /**
          * @brief Load or save the database content. In case of any error, m_what is
@@ -101,18 +101,18 @@ namespace godot
          * @note In order to start a new transaction the last one must be either
          * commited or rollbacked otherwise this function returns Result::FAILED.
          */
-        Result beginTransaction();
+        Result begin_transaction();
 
         /**
          * @brief Commits the last transaction sets the m_transaction member field
-         * to nullptr. If no transaction is begun with beginTransaction() function,
+         * to nullptr. If no transaction is begun with begin_transaction() function,
          * this method returns Result::FAILED. In case of any error, m_what is set
          * with proper error message.
          *
          * @return Result::OK on success and Result::FAILED in case of any error or
          * if no transaction is begun already.
          */
-        Result commitTransaction();
+        Result commit_transaction();
 
         /**
          * @brief Rollback the begun transaction and sets the m_transaction member

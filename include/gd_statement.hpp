@@ -39,7 +39,7 @@ namespace godot
         void _init();
 
         /**
-         * @brief Construct an empty GDStatement object. Use setStatement function
+         * @brief Construct an empty GDStatement object. Use set_statement function
          * before any data fetching.
          */
         GDStatement();
@@ -56,7 +56,7 @@ namespace godot
          *
          * @return  Last result code.
          */
-        Result setStatement(GDDatabase* database, const String query);
+        Result set_statement(GDDatabase* database, const String query);
 
         /**
          * @brief Execute a step of the prepared query to fetch one row of results.
@@ -65,7 +65,7 @@ namespace godot
          * @see SQLite::Statement::executeStep()
          * @return True if the execution was successfull and false otherwise.
          */
-        bool executeStep();
+        bool execute_step();
 
         /**
          * @brief Return a copy of the column data specified by its index. In case
@@ -75,12 +75,12 @@ namespace godot
          * @return A Variant holding the data of the column or null in case of an
          * error e.g. if index is out of range.
          */
-        Variant getColumn(const int index);
+        Variant get_column(const int index);
 
     private:
-        unique_ptr<SQLite::Statement> m_statement;
-        GDDatabase* m_database;
-        bool m_isDone;
+        unique_ptr<SQLite::Statement>       m_statement;
+        GDDatabase*                         m_database;
+        bool                                m_isDone;
     };  // class GDStatement
 }  // namespace godot
 

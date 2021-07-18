@@ -11,9 +11,9 @@ using std::exception;
 
 void GDStatement::_register_methods()
 {
-    godot::register_method("setStatement", &GDStatement::setStatement);
-    godot::register_method("executeStep", &GDStatement::executeStep);
-    godot::register_method("getColumn", &GDStatement::getColumn);
+    godot::register_method("set_statement", &GDStatement::set_statement);
+    godot::register_method("execute_step", &GDStatement::execute_step);
+    godot::register_method("get_column", &GDStatement::get_column);
 }  // _register_method.
 
 
@@ -23,7 +23,7 @@ void GDStatement::_init() { return; }
 GDStatement::GDStatement() : m_database(nullptr), m_isDone(false) {}
 
 
-Result GDStatement::setStatement(GDDatabase* database, const String query)
+Result GDStatement::set_statement(GDDatabase* database, const String query)
 {
     if (database == nullptr || database->m_database == nullptr) {
         return Result::FAILED;
@@ -40,10 +40,10 @@ Result GDStatement::setStatement(GDDatabase* database, const String query)
     m_database = database;
 
     return Result::OK;
-}  // setStatement.
+}  // set_statement.
 
 
-bool GDStatement::executeStep()
+bool GDStatement::execute_step()
 {
     if (m_statement == nullptr) {
         m_database->m_what = "Statement is empty.";
@@ -62,10 +62,10 @@ bool GDStatement::executeStep()
     m_isDone = !result;
 
     return result;
-}  // executeStep.
+}  // execute_step.
 
 
-Variant GDStatement::getColumn(const int index)
+Variant GDStatement::get_column(const int index)
 {
     if (m_statement == nullptr) {
         m_database->m_what = "Statement is empty.";
@@ -90,7 +90,7 @@ Variant GDStatement::getColumn(const int index)
     } catch (std::exception& ex) {
         return Variant();
     }
-}  // getColumn.
+}  // get_column.
 
 
 GDStatement::~GDStatement()

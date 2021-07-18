@@ -12,10 +12,10 @@ void GDDatabase::_register_methods()
 {
     register_method("open", &GDDatabase::open);
     register_method("exec", &GDDatabase::exec);
-    register_method("tableExists", &GDDatabase::tableExists);
+    register_method("commit_transaction", &GDDatabase::commit_transaction);
+    register_method("begin_transaction", &GDDatabase::begin_transaction);
+    register_method("table_exists", &GDDatabase::table_exists);
     register_method("backup", &GDDatabase::backup);
-    register_method("beginTransaction", &GDDatabase::beginTransaction);
-    register_method("commitTransaction", &GDDatabase::commitTransaction);
     register_method("rollback", &GDDatabase::rollback);
     register_method("what", &GDDatabase::what);
 
@@ -88,14 +88,14 @@ int GDDatabase::exec(const String statement)
 
 
 /* Checks whether a table exists in the database. */
-bool GDDatabase::tableExists(const String tableName)
+bool GDDatabase::table_exists(const String tableName)
 {
     if (m_database == nullptr) {
         m_what = "No database is opened.";
         return false;
     }
     return m_database->tableExists(tableName.utf8().get_data());
-}  // tableExists
+}  // table_exists
 
 
 /* Loads or saves database. */
@@ -122,7 +122,7 @@ int GDDatabase::backup(const String filename, int type)
 }  // backup
 
 
-Result GDDatabase::beginTransaction()
+Result GDDatabase::begin_transaction()
 {
     if (m_database == nullptr) {
         m_what = "No database is opened.";
@@ -145,10 +145,10 @@ Result GDDatabase::beginTransaction()
         return Result::FAILED;
     }
     return Result::FAILED;
-}  // beginTransaction.
+}  // begin_transaction.
 
 
-Result GDDatabase::commitTransaction()
+Result GDDatabase::commit_transaction()
 {
     if (m_transaction == nullptr) {
         m_what = "No transaction is begun yet.";
@@ -162,7 +162,7 @@ Result GDDatabase::commitTransaction()
         m_what = ex.what();
         return Result::FAILED;
     }
-}  // commitTransaction.
+}  // commit_transaction.
 
 
 void GDDatabase::rollback()
