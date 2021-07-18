@@ -1,7 +1,7 @@
 import os
 import sys
 
-# sys.tracebacklimit = 0
+sys.tracebacklimit = 0
 
 # Try to detect the host platform automatically.
 # This is used if no `platform` argument is passed
@@ -22,7 +22,7 @@ options.Add(EnumVariable(
     key='platform',
     help='Target Platform',
     default='none',
-    allowed_values=['none', 'linux', 'android'],  # , 'windows'],
+    allowed_values=['none', 'linux', 'android', 'windows'],
     ignorecase=2
 ))
 options.Add(EnumVariable(
@@ -34,7 +34,7 @@ options.Add(EnumVariable(
 options.Add(PathVariable(
     key='gd_library_dir',
     help='Path to .a library generating from godot-cpp bindings.',
-    default=None,
+    default=os.environ.get('GD_LIBRARY_DIR'),
     validator=PathVariable.PathIsDir
 ))
 options.Add(PathVariable(
@@ -60,7 +60,7 @@ options.Add(PathVariable(
 options.Add(EnumVariable(
     key='target',
     help='release or debug target',
-    default='release',
+    default='debug',
     allowed_values=['release', 'debug']
 ))
 options.Add(
@@ -72,7 +72,7 @@ options.Add(
 options.Add(PathVariable(
     key='gd_headers_dir',
     help='Path to godot includes.',
-    default='/usr/local/include/godot/',
+    default=os.environ.get('GD_HEADERS_DIR'),
     validator=PathVariable.PathIsDir
 ))
 options.Add(
@@ -84,15 +84,23 @@ options.Add(
 options.Add(
     key='output_dir',
     help='Path to desired out put foldel.',
-    default='Bin/'
+    default='../Bin/'
 )
 
-VariantDir('build/obj1', 'src', duplicate=0)
-VariantDir('build/obj2', 'SQLiteCpp/src', duplicate=0)
-VariantDir('build/obj3', 'SQLiteCpp/sqlite3', duplicate=0)
-env = Environment(CXXFLAGS="-std=c++17")
+env = Environment(CXXFLAGS="-std=c++17", sources=[])
 options.Update(env=env)
 Help(options.GenerateHelpText(env))
+
+var_dir = 'src/build/obj/' + env['platform']
+if env['platform'] == 'android':
+    var_dir += '/' + env['android_arch']
+
+var_dir_sq = var_dir + "SQLiteCpp"
+var_dir_sq3 = var_dir + "sqlite3"
+
+VariantDir(var_dir, 'src', duplicate=0)
+VariantDir(var_dir_sq, 'SQLiteCpp/src', duplicate=0)
+VariantDir(var_dir_sq3, 'SQLiteCpp/sqlite3', duplicate=0)
 
 
 if env['platform'] == 'none':
@@ -125,8 +133,29 @@ if env['platform'] == 'linux':
     elif env['bits'] == '32':
         env.Append(CCFLAGS=['-m32'])
         env.Append(LINKFLAGS=['-m32'])
+elif env['platform'] == 'windows':
+    if host_platform == 'windows':
+        # MSVC
+        env.Append(LINKFLAGS=['/WX'])
+        if env['target'] == 'debug':
+            env.Append(CCFLAGS=['/Z7', '/Od', '/EHsc', '/D_DEBUG', '/MDd'])
+        elif env['target'] == 'release':
+            env.Append(CCFLAGS=['/O2', '/EHsc', '/DNDEBUG', '/MD'])
 
-if env['platform'] == 'android':
+    elif host_platform == 'linux' or host_platform == 'osx':
+        # Cross-compilation using MinGW
+        if env['bits'] == '64':
+            env['CXX'] = 'x86_64-w64-mingw32-g++'
+            env['AR'] = "x86_64-w64-mingw32-ar"
+            env['RANLIB'] = "x86_64-w64-mingw32-ranlib"
+            env['LINK'] = "x86_64-w64-mingw32-g++"
+        elif env['bits'] == '32':
+            env['CXX'] = 'i686-w64-mingw32-g++'
+            env['AR'] = "i686-w64-mingw32-ar"
+            env['RANLIB'] = "i686-w64-mingw32-ranlib"
+            env['LINK'] = "i686-w64-mingw32-g++"
+        env.Append(CCFLAGS=['-O3', '-std=c++17', '-Wwrite-strings'])
+elif env['platform'] == 'android':
     print('*** Building for <android> ***')
     if 'ANDROID_NDK_ROOT' not in env:
         raise ValueError("""\n\tTo build for Android, ANDROID_NDK_ROOT must be
@@ -193,29 +222,44 @@ outputFile = outpath + 'libgodotsqlite.{}.{}.{}.{}'.format(
     env['platform'],
     env['target'],
     suffix,
-    'so'
+    'dll' if env['platform'] == 'windows' else 'so'
 )
 
-sources = []
-sources += Glob('build/obj1/*.cpp')
-sources += Glob('build/obj2/*.cpp')
-# sources += Glob('build/obj3/*.c')
+env['sources'] += Glob(var_dir + "/*.cpp")
+env['sources'] += Glob(var_dir_sq + "/*.cpp")
+env['sources'] += Glob(var_dir_sq3 + '/*.c')
+
+Export("env")
+
+# SConscript(
+#     []
+# )
 
 list_of_add_includes = env['add_includes'].split(sep=':')
 for incl in list_of_add_includes:
 	env.Append(CPPPATH=incl+':')
 
-workspaceIncludes = ['.:', 'include:',
-                     'SQLiteCpp/include/:', "SQLiteCpp/sqlite3/:"]
+workspaceIncludes = [
+    'include:',
+    'SQLiteCpp/include/:',
+    'SQLiteCpp/sqlite3/:'
+    ]
 for incl in workspaceIncludes:
     env.Append(CPPPATH=incl)
 
-env.Append(CPPPATH=env['gd_headers_dir']+':')
+gd_headers = env['gd_headers_dir']
+if not gd_headers.endswith('/'):
+    gd_headers += '/'
 
-SqliteLib = env.SharedLibrary(target='build/obj3/libsqlite3.so', source='build/obj3/sqlite3.c')
+env.Append(CPPPATH=gd_headers+'include:')
+env.Append(CPPPATH=gd_headers+'include/core:')
+env.Append(CPPPATH=gd_headers+'include/gen:')
+env.Append(CPPPATH=gd_headers+'godot-headers')
+
+# SqliteLib = env.StaticLibrary(target=var_dir_sq3 + '/libsqlite3.so', source=var_dir_sq3 + '/sqlite3.c')
 
 GodotLibrary = env.SharedLibrary(target=outputFile,
-                                 source=sources,
-                                 LIBS=[env['gd_library_name'], 'sqlite3'],
-                                 LIBPATH=[env['gd_library_dir'], 'build/obj3/'])
-Default(SqliteLib, GodotLibrary)
+                                 source=env['sources'],
+                                 LIBS=[env['gd_library_name']],
+                                 LIBPATH=[env['gd_library_dir']])
+Default(GodotLibrary)
