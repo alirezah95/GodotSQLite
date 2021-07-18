@@ -122,6 +122,29 @@ namespace godot
         void rollback();
 
         /**
+         * @brief Returns the row id of the recent successful INSERT into the
+         * database.
+         * 
+         * @return row id of the most recent successful INSERT.
+         */
+        long long get_last_insert_rowid() const;
+
+        /**
+         * @brief Get total number of row changes through INSERT, UPDATE or
+         * DELETE statement.
+         * 
+         * @return An interger value holding total number of row changed.
+         */
+        int get_total_changes() const;
+
+        /**
+         * @brief Returns the file name used to open the database.
+         * 
+         * @return An String containing the file name of the database file.
+         */
+        String get_file_name() const;
+
+        /**
          * @brief   Returns the last error message stored in m_what.
          *
          * @returns m_what value.
@@ -139,11 +162,11 @@ namespace godot
          * @brief Getters for OPEN_READONLY, OPEN_READWRITE and OPEN_CREATE.
          * 
          */
-        int open_readonly() const { return SQLite::OPEN_READONLY; };
-        int open_readwrite() const { return SQLite::OPEN_READWRITE; };
-        int open_create() const { return SQLite::OPEN_CREATE; };
-        int failed() const { return FAILED; };
-        int ok() const { return OK; };
+        int open_readwrite()    const { return SQLite::OPEN_READWRITE; };
+        int open_readonly()     const { return SQLite::OPEN_READONLY; };
+        int open_create()       const { return SQLite::OPEN_CREATE; };
+        int failed()            const { return FAILED; };
+        int ok()                const { return OK; };
 
     private:
         unique_ptr<SQLite::Database> m_database;

@@ -175,6 +175,23 @@ void GDDatabase::rollback()
 }  // rollback.
 
 
+long long GDDatabase::get_last_insert_rowid() const
+{
+    return m_database->getLastInsertRowid();
+}
+
+
+int GDDatabase::get_total_changes() const
+{
+    return m_database->getTotalChanges();
+}
+
+
+String GDDatabase::get_file_name() const
+{
+    return m_database->getFilename().c_str();
+}
+
 /* Returns m_what value. */
 String GDDatabase::what() const { return m_what; }  // what.
 
