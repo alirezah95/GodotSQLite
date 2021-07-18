@@ -1,6 +1,4 @@
-#include <SQLiteCpp/Database.h>
-
-#include <gd_database.hpp>
+#include "gd_database.hpp"
 
 
 using namespace godot;
@@ -20,6 +18,31 @@ void GDDatabase::_register_methods()
     register_method("commitTransaction", &GDDatabase::commitTransaction);
     register_method("rollback", &GDDatabase::rollback);
     register_method("what", &GDDatabase::what);
+
+
+    register_property<GDDatabase, int>("FAILED",
+        &GDDatabase::set_flags, &GDDatabase::failed,
+        2, GODOT_METHOD_RPC_MODE_DISABLED,
+        GODOT_PROPERTY_USAGE_NOEDITOR);
+    register_property<GDDatabase, int>("OK",
+        &GDDatabase::set_flags, &GDDatabase::ok,
+        2, GODOT_METHOD_RPC_MODE_DISABLED,
+        GODOT_PROPERTY_USAGE_NOEDITOR);
+    register_property<GDDatabase, int>("OPEN_READONLY",
+        &GDDatabase::set_flags, &GDDatabase::open_readonly,
+        SQLite::OPEN_READONLY,
+        GODOT_METHOD_RPC_MODE_DISABLED,
+        GODOT_PROPERTY_USAGE_NOEDITOR);
+    register_property<GDDatabase, int>("OPEN_READWRITE",
+        &GDDatabase::set_flags, &GDDatabase::open_readwrite,
+        SQLite::OPEN_READWRITE,
+        GODOT_METHOD_RPC_MODE_DISABLED,
+        GODOT_PROPERTY_USAGE_NOEDITOR); 
+    register_property<GDDatabase, int>("OPEN_CREATE",
+        &GDDatabase::set_flags, &GDDatabase::open_create,
+        SQLite::OPEN_CREATE,
+        GODOT_METHOD_RPC_MODE_DISABLED,
+        GODOT_PROPERTY_USAGE_NOEDITOR); 
 
 
     return;
@@ -162,3 +185,4 @@ GDDatabase::~GDDatabase()
     m_database = nullptr;
     return;
 }  // destructor.
+
