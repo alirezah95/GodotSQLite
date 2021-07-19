@@ -127,7 +127,7 @@ namespace godot
          * 
          * @return row id of the most recent successful INSERT.
          */
-        long long get_last_insert_rowid() const;
+        uint64_t get_last_insert_rowid() const;
 
         /**
          * @brief Get total number of row changes through INSERT, UPDATE or

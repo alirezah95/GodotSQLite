@@ -17,6 +17,10 @@ void GDDatabase::_register_methods()
     register_method("table_exists", &GDDatabase::table_exists);
     register_method("backup", &GDDatabase::backup);
     register_method("rollback", &GDDatabase::rollback);
+    register_method("get_last_insert_rowid",
+        &GDDatabase::get_last_insert_rowid);
+    register_method("get_total_changes", &GDDatabase::get_total_changes);
+    register_method("get_file_name", &GDDatabase::get_file_name);
     register_method("what", &GDDatabase::what);
 
 
@@ -175,7 +179,7 @@ void GDDatabase::rollback()
 }  // rollback.
 
 
-long long GDDatabase::get_last_insert_rowid() const
+uint64_t GDDatabase::get_last_insert_rowid() const
 {
     return m_database->getLastInsertRowid();
 }
